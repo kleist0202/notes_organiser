@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HEADERS title="" text="">
+    <FATHERS title="item1" text="this is item1">
+        <CHILDREN title="subitem1" text="">
+            <GRANDCHILDREN title="subsubitem1" text="some text...&#10;...some more text...&#10;&#10;&#10;&#10;...and more&#10;"/>
+        </CHILDREN>
+        <CHILDREN title="subitem2" text=""/>
+    </FATHERS>
+    <FATHERS title="item2" text="this is item2"/>
+</HEADERS>

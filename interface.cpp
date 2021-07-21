@@ -39,11 +39,7 @@ Interface::Interface(const QString &defaultFileName, QWidget* parent)
     setDefaultButton = new QPushButton("&Set Default");
 
     // at the beginning all buttons are disabled 
-    addButton->setEnabled(false);
-    addSubButton->setEnabled(false);
-    submitButton->setEnabled(false);
-    editButton->setEnabled(false);
-    removeButton->setEnabled(false);
+    setButtonsDisabled(QVector{addButton, addSubButton, submitButton, editButton, removeButton});
 
     // sending signals for various actions
     connect(addButton, SIGNAL(clicked()), this, SLOT(addButtonClicked()));
@@ -369,7 +365,7 @@ void Interface::readingFromFile()
     addSubButton->setEnabled(false);
 }
 
-// ------------- menu functions definitions -------------
+// --------------------- menu functions definitions ----------------------
 
 void Interface::makeNew()
 {
@@ -484,4 +480,10 @@ void Interface::about()
                 "Kinda boring, but I like it."));
 }
 
-// ------------------------------------------------------
+// -----------------------------------------------------------------------
+
+void Interface::setButtonsDisabled(const QVector<QPushButton* >& buttons)
+{
+    for (int i = 0; i < buttons.size(); ++i)
+        buttons[i]->setEnabled(false);
+}

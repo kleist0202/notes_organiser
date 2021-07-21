@@ -75,6 +75,8 @@ private slots:
     void quit();
     void about();
 
+    // helpful functions
+    void setButtonsDisabled(const QVector<QPushButton* >& buttons);
 };
 
 #endif // INTERFACE_HPP

@@ -398,7 +398,7 @@ void Interface::open()
     fileName =
             QFileDialog::getOpenFileName(this, tr("Open Input File"),
             path_to_notes,
-            tr("XML Files (*.xml *.xml.bak)"));
+            tr("XML Files (*.xml)"));
 
     readingFromFile();
 }
@@ -430,7 +430,7 @@ void Interface::save()
     }
     else {
         file_to_write.close();
-        QMessageBox::warning(this, "Organiser", "File was not saves properly");
+        QMessageBox::warning(this, "Organiser", "File was not saved properly");
         return;
     }
     
@@ -440,8 +440,10 @@ void Interface::save()
 
 void Interface::saveAs()
 {
+    QString path_to_notes = QDir::currentPath() + "/notes";
+
     QString file_name = QFileDialog::getSaveFileName(this, tr("Save Organiser File"),
-               QDir::currentPath(),
+               path_to_notes,
                tr("XML Files (*.xbel *.xml)"));
 
     if (file_name.isEmpty())
@@ -484,7 +486,7 @@ void Interface::makeBackup()
         QMessageBox::warning(this, "Organiser", "Backup cannot be done!");
     }
     else {
-        QMessageBox::warning(this, "Organiser", "Backup created successfully!");
+        QMessageBox::information(this, "Organiser", "Backup created successfully!");
     }
 }
 

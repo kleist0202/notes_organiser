@@ -72,6 +72,7 @@ private slots:
     void open();
     void save();
     void saveAs();
+    void makeBackup();
     void quit();
     void about();
 

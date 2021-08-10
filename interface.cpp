@@ -56,6 +56,7 @@ Interface::Interface(const QString &defaultFileName, QWidget* parent)
     fileMenu->addAction(tr("Open..."), this, &Interface::open);
     fileMenu->addAction(tr("Save..."), this, &Interface::save);
     fileMenu->addAction(tr("Save as..."), this, &Interface::saveAs);
+    fileMenu->addAction(tr("Make backup..."), this, &Interface::makeBackup);
     fileMenu->addAction(tr("Quit"), this, &QWidget::close);
     QMenu *helpMenu = menuBar()->addMenu("&Help");
     helpMenu->addAction(tr("&About"), this, &Interface::about);
@@ -397,7 +398,7 @@ void Interface::open()
     fileName =
             QFileDialog::getOpenFileName(this, tr("Open Input File"),
             path_to_notes,
-            tr("XBEL Files (*.xbel *.xml)"));
+            tr("XML Files (*.xml *.xml.bak)"));
 
     readingFromFile();
 }
@@ -409,7 +410,7 @@ void Interface::save()
     if (fileName.isEmpty()) {
         QString file_name = QFileDialog::getSaveFileName(this, tr("Save Organiser File"),
                    path_to_notes,
-                   tr("XBEL Files (*.xbel *.xml)"));
+                   tr("XML Files (*.xml)"));
 
         if (file_name.isEmpty())
             return;
@@ -441,7 +442,7 @@ void Interface::saveAs()
 {
     QString file_name = QFileDialog::getSaveFileName(this, tr("Save Organiser File"),
                QDir::currentPath(),
-               tr("XBEL Files (*.xbel *.xml)"));
+               tr("XML Files (*.xbel *.xml)"));
 
     if (file_name.isEmpty())
         return;
@@ -466,6 +467,25 @@ void Interface::saveAs()
 
     // set current file name in the text line above tree
     defaultFileLine->setText(fileName);
+}
+
+void Interface::makeBackup()
+{
+    QString path_to_current_file = QDir::currentPath() + "/notes/" + fileName.split("/").last();
+
+    // cannot copy when file exists, so it must be removed
+    if (QFile::exists(path_to_current_file + ".bak")) {
+        QFile::remove(path_to_current_file + ".bak");
+    } 
+    else {
+        qDebug() << "cannot remove file";
+    }
+    if(!QFile::copy(path_to_current_file, path_to_current_file + ".bak")) {
+        QMessageBox::warning(this, "Organiser", "Backup cannot be done!");
+    }
+    else {
+        QMessageBox::warning(this, "Organiser", "Backup created successfully!");
+    }
 }
 
 void Interface::quit()

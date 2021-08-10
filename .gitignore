@@ -1,0 +1,16 @@
+# C++ objects and libs
+*.o
+
+# Qt-es
+/.qmake.cache
+/.qmake.stash
+*.moc
+moc_*.cpp
+moc_*.h
+Makefile*
+# Executable
+notes_organiser
+
+# Ignore all notes excluding example
+notes/*
+!notes/example.xml

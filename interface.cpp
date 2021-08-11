@@ -171,8 +171,6 @@ void Interface::addSubButtonClicked()
     if (!savedItem)
         return;
     
-    submitButton->setEnabled(false);
-
     QStringList default_value({QString("new%1").arg(new_entry_index)});
     TreeItem* itemExist = TreeItem::searchTree(rootItem, default_value[0]);
 
@@ -192,6 +190,9 @@ void Interface::addSubButtonClicked()
     }
 
     found->addChild(new TreeItem(default_value, found));
+
+    // disable submitButton
+    setButtonsDisabled(QVector{submitButton});
 }
 
 void Interface::removeButtonClicked()
@@ -202,11 +203,8 @@ void Interface::removeButtonClicked()
     titleLine->clear();
     messageText->clear();
 
-    removeButton->setEnabled(false);
-    editButton->setEnabled(false);
-    submitButton->setEnabled(false);
-    addButton->setEnabled(false);
-    addSubButton->setEnabled(false);
+    // disable all buttons
+    setButtonsDisabled(QVector{addButton, addSubButton, submitButton, editButton, removeButton});
 }
 
 void Interface::editButtonClicked()
@@ -214,10 +212,10 @@ void Interface::editButtonClicked()
     messageText->setReadOnly(false);
     titleLine->setReadOnly(false);
 
-    addButton->setEnabled(false);
-    addSubButton->setEnabled(false);
     submitButton->setEnabled(true);
-    removeButton->setEnabled(false);
+
+    // disable add, addsub and remove buttons
+    setButtonsDisabled(QVector{addButton, addSubButton, removeButton});
 }
 
 void Interface::submitButtonClicked()
@@ -245,7 +243,9 @@ void Interface::submitButtonClicked()
     removeButton->setEnabled(true);
     addButton->setEnabled(true);
     addSubButton->setEnabled(true);
-    submitButton->setEnabled(false);
+
+    // disable submit button
+    setButtonsDisabled(QVector{submitButton});
 }
 
 void Interface::setDefaultButtonClicked()
@@ -359,11 +359,8 @@ void Interface::readingFromFile()
 
     makeTree(tree, rootItem);
 
-    removeButton->setEnabled(false);
-    editButton->setEnabled(false);
-    submitButton->setEnabled(false);
-    addButton->setEnabled(false);
-    addSubButton->setEnabled(false);
+    // disable all buttons
+    setButtonsDisabled(QVector{addButton, addSubButton, submitButton, editButton, removeButton});
 }
 
 // --------------------- menu functions definitions ----------------------
@@ -385,11 +382,8 @@ void Interface::makeNew()
     rootItem->addChild(new TreeItem({"new"}, rootItem));
     makeTree(tree, rootItem);
 
-    removeButton->setEnabled(false);
-    editButton->setEnabled(false);
-    submitButton->setEnabled(false);
-    addButton->setEnabled(false);
-    addSubButton->setEnabled(false);
+    // disable all buttons
+    setButtonsDisabled(QVector{addButton, addSubButton, submitButton, editButton, removeButton});
 }
 
 void Interface::open()

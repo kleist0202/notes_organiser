@@ -11,6 +11,7 @@ Interface::Interface(const QString &defaultFileName, QWidget* parent)
     rootItem = new TreeItem({});
     savedItem = nullptr;
     new_entry_index = 0;
+    path_to_notes = QDir::currentPath() + "/notes";
 
     // create empty tree widget
     tree = new QTreeWidget;
@@ -136,13 +137,13 @@ Interface::Interface(const QString &defaultFileName, QWidget* parent)
     ); 
 }
 
+// --------------------- button functions definitions ----------------------
+
 void Interface::addButtonClicked()
 {
     if (!savedItem)
         return;
     
-    submitButton->setEnabled(false);
-
     QStringList default_value({QString("new%1").arg(new_entry_index)});
     TreeItem* itemExist = TreeItem::searchTree(rootItem, default_value[0]);
 
@@ -165,6 +166,9 @@ void Interface::addButtonClicked()
 
     // get found's parent to add 'brother' for selected item
     found->getParent()->addChild(new TreeItem(default_value, found->getParent()));
+
+    // disable submit button
+    setButtonsDisabled(QVector{submitButton});
 }
 
 void Interface::addSubButtonClicked() 
@@ -212,7 +216,8 @@ void Interface::editButtonClicked()
     messageText->setReadOnly(false);
     titleLine->setReadOnly(false);
 
-    submitButton->setEnabled(true);
+    // enable submit button
+    setButtonsEnabled(QVector{submitButton});
 
     // disable add, addsub and remove buttons
     setButtonsDisabled(QVector{addButton, addSubButton, removeButton});
@@ -239,10 +244,8 @@ void Interface::submitButtonClicked()
     titleLine->setReadOnly(true);
     messageText->setReadOnly(true);
 
-    editButton->setEnabled(true);
-    removeButton->setEnabled(true);
-    addButton->setEnabled(true);
-    addSubButton->setEnabled(true);
+    // enable most buttons
+    setButtonsEnabled(QVector{editButton, removeButton, addButton, addSubButton});
 
     // disable submit button
     setButtonsDisabled(QVector{submitButton});
@@ -265,6 +268,8 @@ void Interface::setDefaultButtonClicked()
     statusBar()->showMessage(QString("%1 set as default").arg(fileName.split("/").last()), 3000);
 }
 
+// -------------------------------------------------------------------------
+
 void Interface::clicked_tree_item(QTreeWidgetItem *item, int column)
 {
     int absolute_column{0};
@@ -275,10 +280,8 @@ void Interface::clicked_tree_item(QTreeWidgetItem *item, int column)
     selectedItem = TreeItem::searchTree(rootItem, item->text(absolute_column));
     messageText->setText(selectedItem->getDataAt(1));
 
-    removeButton->setEnabled(true);
-    editButton->setEnabled(true);
-    addButton->setEnabled(true);
-    addSubButton->setEnabled(true);
+    // enable buttons except submit button
+    setButtonsEnabled(QVector{editButton, removeButton, addButton, addSubButton});
 }
 
 void Interface::selectNext()
@@ -296,10 +299,8 @@ void Interface::selectNext()
     selectedItem = TreeItem::searchTree(rootItem, current_tree_item->text(absolute_column));
     messageText->setText(selectedItem->getDataAt(1));
 
-    removeButton->setEnabled(true);
-    editButton->setEnabled(true);
-    addButton->setEnabled(true);
-    addSubButton->setEnabled(true);
+    // enable buttons except submit button
+    setButtonsEnabled(QVector{editButton, removeButton, addButton, addSubButton});
 }
 
 QTreeWidgetItem* Interface::createChildItem(QTreeWidgetItem *item, QStringList name)
@@ -388,6 +389,11 @@ void Interface::readingFromFile()
 
 void Interface::makeNew()
 {
+    
+
+
+    // ----- clear everything -----
+    
     tree->clear();
     delete rootItem;
     rootItem = new TreeItem({});
@@ -400,6 +406,8 @@ void Interface::makeNew()
 
     fileName.clear();
 
+    // -----------------------------
+
     rootItem->addChild(new TreeItem({"new"}, rootItem));
     makeTree(tree, rootItem);
 
@@ -409,7 +417,6 @@ void Interface::makeNew()
 
 void Interface::open()
 {
-    QString path_to_notes = QDir::currentPath() + "/notes";
     fileName =
             QFileDialog::getOpenFileName(this, tr("Open Input File"),
             path_to_notes,
@@ -420,8 +427,6 @@ void Interface::open()
 
 void Interface::save()
 {
-    QString path_to_notes = QDir::currentPath() + "/notes";
-
     if (fileName.isEmpty()) {
         QString file_name = QFileDialog::getSaveFileName(this, tr("Save Organiser File"),
                    path_to_notes,
@@ -455,8 +460,6 @@ void Interface::save()
 
 void Interface::saveAs()
 {
-    QString path_to_notes = QDir::currentPath() + "/notes";
-
     QString file_name = QFileDialog::getSaveFileName(this, tr("Save Organiser File"),
                path_to_notes,
                tr("XML Files (*.xbel *.xml)"));
@@ -488,7 +491,7 @@ void Interface::saveAs()
 
 void Interface::makeBackup()
 {
-    QString path_to_current_file = QDir::currentPath() + "/notes/" + fileName.split("/").last();
+    QString path_to_current_file = path_to_notes + "/" + fileName.split("/").last();
 
     // cannot copy when file exists, so it must be removed
     if (QFile::exists(path_to_current_file + ".bak")) {
@@ -523,4 +526,10 @@ void Interface::setButtonsDisabled(const QVector<QPushButton* >& buttons)
 {
     for (int i = 0; i < buttons.size(); ++i)
         buttons[i]->setEnabled(false);
+}
+
+void Interface::setButtonsEnabled(const QVector<QPushButton* >& buttons) 
+{
+    for (int i = 0; i < buttons.size(); ++i)
+        buttons[i]->setEnabled(true);
 }

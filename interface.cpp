@@ -6,19 +6,19 @@
 Interface::Interface(const QString &defaultFileName, QWidget* parent)
     : QMainWindow(parent)
 {
-    // setting default variables
+    // set default variables
     this->defaultFileName = defaultFileName;
     rootItem = new TreeItem({});
     savedItem = nullptr;
     new_entry_index = 0;
 
-    // creating empty tree widget
+    // create empty tree widget
     tree = new QTreeWidget;
     tree->header()->setSectionResizeMode(QHeaderView::Stretch);
     tree->setHeaderLabels({"Name", "Description"});
     tree->setColumnCount(2);
 
-    // creating labels and widgets for editing
+    // create labels and widgets for editing
     QLabel *titleLabel = new QLabel("Title:");
     titleLine = new QLineEdit;
     defaultFileLine = new QLineEdit;
@@ -30,7 +30,7 @@ Interface::Interface(const QString &defaultFileName, QWidget* parent)
     titleLine->setReadOnly(true);
     messageText->setReadOnly(true);
 
-    // creating buttons
+    // create buttons
     addButton = new QPushButton("&Add");
     addSubButton = new QPushButton("&Add Subitem");
     submitButton = new QPushButton("&Submit");
@@ -41,7 +41,7 @@ Interface::Interface(const QString &defaultFileName, QWidget* parent)
     // at the beginning all buttons are disabled 
     setButtonsDisabled(QVector{addButton, addSubButton, submitButton, editButton, removeButton});
 
-    // sending signals for various actions
+    // send signals for various actions
     connect(addButton, SIGNAL(clicked()), this, SLOT(addButtonClicked()));
     connect(addSubButton, SIGNAL(clicked()), this, SLOT(addSubButtonClicked()));
     connect(submitButton, SIGNAL(clicked()), this, SLOT(submitButtonClicked()));
@@ -50,7 +50,7 @@ Interface::Interface(const QString &defaultFileName, QWidget* parent)
     connect(setDefaultButton, SIGNAL(clicked()), this, SLOT(setDefaultButtonClicked()));
     connect(tree, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(clicked_tree_item(QTreeWidgetItem*, int)));
     
-    // setting menus
+    // set menus
     QMenu *fileMenu = menuBar()->addMenu("&File");
     fileMenu->addAction(tr("New"), this, &Interface::makeNew);
     fileMenu->addAction(tr("Open..."), this, &Interface::open);
@@ -61,7 +61,7 @@ Interface::Interface(const QString &defaultFileName, QWidget* parent)
     QMenu *helpMenu = menuBar()->addMenu("&Help");
     helpMenu->addAction(tr("&About"), this, &Interface::about);
 
-    // setting central layout
+    // set central layout
     QWidget *centralWidget = new QWidget;
 
     QGridLayout *mainLayout = new QGridLayout;
@@ -93,7 +93,7 @@ Interface::Interface(const QString &defaultFileName, QWidget* parent)
     centralWidget->setLayout(mainLayout);
     setCentralWidget(centralWidget);
 
-    // reading .defualt file 
+    // read .defualt file 
     QFile defaultFile(defaultFileName);
 
     if (!defaultFile.open(QFile::ReadOnly | QFile::Text)) {
@@ -115,14 +115,14 @@ Interface::Interface(const QString &defaultFileName, QWidget* parent)
     }
     // set current file name in the text line above tree...
     defaultFileLine->setText(fileName);
-    // ...and it to read-only
+    // ...and set it to read-only
     defaultFileLine->setReadOnly(true);
     
     // make window larger
     const QSize availableSize = screen()->availableGeometry().size();
     resize(availableSize.width() / 1.5, availableSize.height() / 2);
 
-    // centering window
+    // center window
     this->setGeometry
     (
         QStyle::alignedRect(
@@ -144,7 +144,7 @@ void Interface::addButtonClicked()
     QStringList default_value({QString("new%1").arg(new_entry_index)});
     TreeItem* itemExist = TreeItem::searchTree(rootItem, default_value[0]);
 
-    // preventing encountering existing "new*" item
+    // prevent encountering existing "new*" item
     while(itemExist) {
         ++new_entry_index;
         default_value[0] = QString("new%1").arg(new_entry_index);
@@ -153,7 +153,7 @@ void Interface::addButtonClicked()
 
     createChildItem(savedItem->parent(), default_value);
 
-    // looking for selected item to get his parent
+    // look for selected item to get his parent
     TreeItem* found = TreeItem::searchTree(rootItem, savedItem->text(0));
 
     if (!found) {
@@ -174,7 +174,7 @@ void Interface::addSubButtonClicked()
     QStringList default_value({QString("new%1").arg(new_entry_index)});
     TreeItem* itemExist = TreeItem::searchTree(rootItem, default_value[0]);
 
-    // preventing encountering existing "new*" item
+    // prevent encountering existing "new*" item
     while(itemExist) {
         ++new_entry_index;
         default_value[0] = QString("new%1").arg(new_entry_index);

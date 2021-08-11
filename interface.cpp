@@ -49,6 +49,7 @@ Interface::Interface(const QString &defaultFileName, QWidget* parent)
     connect(editButton, SIGNAL(clicked()), this, SLOT(editButtonClicked()));
     connect(setDefaultButton, SIGNAL(clicked()), this, SLOT(setDefaultButtonClicked()));
     connect(tree, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(clicked_tree_item(QTreeWidgetItem*, int)));
+    connect(this, SIGNAL(selectionChanged()), this, SLOT(selectNext()));
     
     // set menus
     QMenu *fileMenu = menuBar()->addMenu("&File");
@@ -58,6 +59,7 @@ Interface::Interface(const QString &defaultFileName, QWidget* parent)
     fileMenu->addAction(tr("Save as..."), this, &Interface::saveAs);
     fileMenu->addAction(tr("Make backup..."), this, &Interface::makeBackup);
     fileMenu->addAction(tr("Quit"), this, &QWidget::close);
+
     QMenu *helpMenu = menuBar()->addMenu("&Help");
     helpMenu->addAction(tr("&About"), this, &Interface::about);
 
@@ -163,7 +165,6 @@ void Interface::addButtonClicked()
 
     // get found's parent to add 'brother' for selected item
     found->getParent()->addChild(new TreeItem(default_value, found->getParent()));
-    
 }
 
 void Interface::addSubButtonClicked() 
@@ -203,8 +204,7 @@ void Interface::removeButtonClicked()
     titleLine->clear();
     messageText->clear();
 
-    // disable all buttons
-    setButtonsDisabled(QVector{addButton, addSubButton, submitButton, editButton, removeButton});
+    emit selectionChanged();
 }
 
 void Interface::editButtonClicked()
@@ -273,6 +273,27 @@ void Interface::clicked_tree_item(QTreeWidgetItem *item, int column)
 
     savedItem = item;
     selectedItem = TreeItem::searchTree(rootItem, item->text(absolute_column));
+    messageText->setText(selectedItem->getDataAt(1));
+
+    removeButton->setEnabled(true);
+    editButton->setEnabled(true);
+    addButton->setEnabled(true);
+    addSubButton->setEnabled(true);
+}
+
+void Interface::selectNext()
+{
+    QTreeWidgetItem* current_tree_item = tree->currentItem();
+    if (!current_tree_item) {
+        setButtonsDisabled(QVector{addButton, addSubButton, submitButton, editButton, removeButton});
+        return;
+    }
+
+    int absolute_column{0};
+    titleLine->setText(current_tree_item->text(absolute_column));
+
+    savedItem = tree->currentItem();
+    selectedItem = TreeItem::searchTree(rootItem, current_tree_item->text(absolute_column));
     messageText->setText(selectedItem->getDataAt(1));
 
     removeButton->setEnabled(true);

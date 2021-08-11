@@ -75,9 +75,14 @@ private slots:
     void makeBackup();
     void quit();
     void about();
-
-    // helpful functions
+    void selectNext();
+    
+    // useful functions
     void setButtonsDisabled(const QVector<QPushButton* >& buttons);
+
+signals:
+    void selectionChanged();
+
 };
 
 #endif // INTERFACE_HPP

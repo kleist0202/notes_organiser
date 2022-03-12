@@ -1,5 +1,7 @@
 QT += widgets xml
 
+VPATH += ./src
+
 HEADERS       = interface.hpp \
                 xmlwriter.hpp \
                 xmlreader.hpp \

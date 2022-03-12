@@ -30,6 +30,8 @@ public:
 private:
     QString fileName;
     QString defaultFileName;
+    QString path_to_notes;
+
     QFile file;
 
     QStringList tempList;
@@ -72,8 +74,18 @@ private slots:
     void open();
     void save();
     void saveAs();
+    void makeBackup();
     void quit();
     void about();
+    void selectNext();
+    
+signals:
+    void selectionChanged();
+
+private:
+    // useful functions
+    void setButtonsDisabled(const QVector<QPushButton* >& buttons);
+    void setButtonsEnabled(const QVector<QPushButton* >& buttons);
 
 };
 
